@@ -46,29 +46,53 @@
 // 👍 787 👎 0
 
 #include "bits/stdc++.h"
+
 using namespace std;
 
 //leetcode submit region begin(Prohibit modification and deletion)
+class TrieNode {
+public:
+    string word = "";               // 记录节点颜色+到此为止的word
+    vector<TrieNode *> children;     // 记录到下一级的链接
+    TrieNode() : children(vector<TrieNode *>(26, nullptr)) {}
+};
+
 class Trie {
 public:
-    /** Initialize your data structure here. */
-    Trie() {
 
-    }
-    
+    TrieNode* root;
+
+    /** Initialize your data structure here. */
+    Trie() : root(new TrieNode) { }
+
     /** Inserts a word into the trie. */
     void insert(string word) {
-
+        TrieNode* p = root;
+        for (char c : word) {
+            if (!p->children[c-'a']) p->children[c-'a'] = new TrieNode;
+            p = p->children[c-'a'];
+        }
+        p->word = word;
     }
-    
+
     /** Returns if the word is in the trie. */
     bool search(string word) {
-
+        TrieNode* p = root;
+        for (char c : word) {
+            if (!p->children[c-'a']) return false;
+            p = p->children[c-'a'];
+        }
+        return !p->word.empty();
     }
-    
+
     /** Returns if there is any word in the trie that starts with the given prefix. */
     bool startsWith(string prefix) {
-
+        TrieNode* p = root;
+        for (char c : prefix) {
+            if (!p->children[c-'a']) return false;
+            p = p->children[c-'a'];
+        }
+        return true;
     }
 };
 
