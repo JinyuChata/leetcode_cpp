@@ -25,17 +25,61 @@
 // 👍 64 👎 0
 
 #include "bits/stdc++.h"
+
 using namespace std;
 
 //leetcode submit region begin(Prohibit modification and deletion)
+class TrieNode {
+public:
+    string word;
+    int weighMax = -1;
+    vector<TrieNode *> children;
+
+    TrieNode() : children(vector<TrieNode *>(27, nullptr)) {}
+};
+
 class WordFilter {
 public:
-    WordFilter(vector<string>& words) {
+    TrieNode *root = new TrieNode;
 
+    WordFilter(vector<string> &words) {
+        // 建立前缀树，拼接每个单词的可能 suffix#word
+        for (int i = 0; i < words.size(); i++) {
+            string& word = words[i];
+            for (int start = 0; start < word.size(); start++) {
+                auto p = root;
+                string nS = word.substr(start) + "#" + word;
+                bool after = false;
+                for (char c : nS) {
+                    int idx = c == '#' ? 26 : c - 'a';
+
+                    if (!p->children[idx]) {
+                        p->children[idx] = new TrieNode;
+                    }
+                    p = p->children[idx];
+                    if (idx == 26) after = true;
+                    if (after) {
+                        p->word = nS;
+                        p->weighMax = max(p->weighMax, i);
+                    }
+                }
+            }
+        }
     }
-    
-    int f(string prefix, string suffix) {
 
+    int f(string prefix, string suffix) {
+        string concat = suffix + "#" + prefix;
+        int res;
+        auto p = root;
+        for (char c : concat) {
+            int idx = c == '#' ? 26 : c - 'a';
+            if (!p->children[idx]) {
+                return -1;
+            }
+            p = p->children[idx];
+        }
+
+        return p->weighMax;
     }
 };
 
@@ -48,5 +92,5 @@ public:
 
 
 int main() {
-    Solution s;
+//    Solution s;
 }
