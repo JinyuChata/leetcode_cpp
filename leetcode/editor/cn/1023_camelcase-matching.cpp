@@ -48,11 +48,35 @@
 // Related Topics 字典树 字符串 
 // 👍 26 👎 0
 
+#include "bits/stdc++.h"
+using namespace std;
 
 //leetcode submit region begin(Prohibit modification and deletion)
 class Solution {
 public:
     vector<bool> camelMatch(vector<string>& queries, string pattern) {
+        vector<bool> bv;
+        for (int i = 0; i < queries.size(); i++) {
+            string& s = queries[i];
+            bv.push_back(canMatch(s, pattern));
+        }
+        return bv;
+    }
+
+    bool canMatch(string& query, string& pattern) {
+        int qI = 0, pI = 0;
+        while (qI < query.size()) {
+            if (pI < pattern.size() && pattern[pI] == query[qI]) {
+                // 能够匹配
+                pI++; qI++;
+            } else if (query[qI] >= 'A' && query[qI] <= 'Z') {
+                return false;
+            } else {
+                qI++;
+            }
+        }
+
+        return pI == pattern.size();
 
     }
 };
