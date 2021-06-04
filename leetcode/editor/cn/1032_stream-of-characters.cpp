@@ -38,27 +38,73 @@
 // Related Topics 字典树 
 // 👍 59 👎 0
 
+#include "bits/stdc++.h"
+using namespace std;
 
 //leetcode submit region begin(Prohibit modification and deletion)
+// 定义逆向存储的TrieNode
+class TrieNode {
+public:
+    string word = "";
+    vector<TrieNode*> children;
+
+    TrieNode(): children(vector<TrieNode*>(26, nullptr)) {}
+};
+
 class StreamChecker {
+private:
+    TrieNode* root;
 public:
     StreamChecker(vector<string>& words) {
-
+        // 建树
+        root = new TrieNode;
+        for (string& word : words) {
+            auto p = root;
+            for (int i = word.size()-1; i >= 0; i--) {
+                char c = word[i];
+                if (!p->children[c-'a']) p->children[c-'a'] = new TrieNode;
+                p = p->children[c-'a'];
+            }
+            p->word = word;
+        }
     }
+
+    vector<char> queried;
     
     bool query(char letter) {
-
+        queried.push_back(letter);
+        auto p = root;
+        for (int i = queried.size()-1; i >= 0; i--) {
+            char c = queried[i];
+            if (!p->children[c-'a']) return false;
+            p = p->children[c-'a'];
+            if (!p->word.empty()) return true;
+        }
+        return false;
     }
 };
 
 /**
  * Your StreamChecker object will be instantiated and called as such:
- * StreamChecker* obj = new StreamChecker(words);
- * bool param_1 = obj->query(letter);
+
  */
 //leetcode submit region end(Prohibit modification and deletion)
 
 
 int main() {
-    Solution s;
+//    Solution s;
+    vector<string> words = {"cd","f","kl"};
+    StreamChecker* obj = new StreamChecker(words);
+    cout << obj->query('a') << endl;
+    cout << obj->query('b') << endl;
+    cout << obj->query('c') << endl;
+    cout << obj->query('d') << endl;
+    cout << obj->query('e') << endl;
+    cout << obj->query('f') << endl;
+    cout << obj->query('g') << endl;
+    cout << obj->query('h') << endl;
+    cout << obj->query('i') << endl;
+    cout << obj->query('j') << endl;
+    cout << obj->query('k') << endl;
+    cout << obj->query('l') << endl;
 }
