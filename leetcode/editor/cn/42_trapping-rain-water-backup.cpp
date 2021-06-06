@@ -29,38 +29,45 @@
 // 0 <= height[i] <= 105 
 // 
 // Related Topics 栈 数组 双指针 动态规划 
-// 👍 2387 👎 0
-#include "bits/stdc++.h"
+// 👍 2364 👎 0
+#include <bits/stdc++.h>
 using namespace std;
 
 //leetcode submit region begin(Prohibit modification and deletion)
 class Solution {
 public:
     int trap(vector<int>& height) {
-        if (height.size() == 0) return 0;
-        // 分别计算左侧和右侧的max
         int n = height.size();
-        vector<int> leftMax(n);
-        vector<int> rightMax(n);
+        if (n < 2) return 0;
 
-        leftMax[0] = 0;
-        rightMax[n-1] = 0;
-        for (int i = 1; i < n; i++) {
-            leftMax[i] = max(leftMax[i-1], height[i-1]);
+        vector<int> left_max(n);
+        vector<int> right_max(n);
+
+        // 找到左侧、右侧的最高柱子
+        left_max[1] = height[0];
+        for (int i = 2; i < n; ++i) {
+            left_max[i] = max(left_max[i-1], height[i-1]);
         }
 
-        for (int i = n-2; i >= 0; i--) {
-            rightMax[i] = max(rightMax[i+1], height[i+1]);
+        right_max[n-2] = height[n-1];
+        for (int i = n-3; i >= 0; i--) {
+            right_max[i] = max(right_max[i+1], height[i+1]);
         }
 
-        int res = 0;
-        for (int i = 0; i < n; i++) {
-            int m = min(leftMax[i], rightMax[i]);
-            if (m > height[i]) res += m - height[i];
+        // 遍历柱子，
+        // 分别看左侧、右侧的最高柱子的较小值，是不是比当前柱子高
+        // 如果高，则可以存水
+        int sum = 0;
+        for (int i = 1; i < n-1; ++i) {
+            int left = left_max[i];
+            int right = right_max[i];
+            int minV = min(left, right);
+            if (minV > height[i]) {
+                sum += minV - height[i];
+            }
         }
 
-        return res;
-
+        return sum;
     }
 };
 //leetcode submit region end(Prohibit modification and deletion)
