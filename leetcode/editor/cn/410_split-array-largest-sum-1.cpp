@@ -6,7 +6,7 @@
 //
 // 示例 1： 
 //
-//
+// 
 //输入：nums = [7,2,5,10,8], m = 2
 //输出：18
 //解释：
@@ -36,15 +36,42 @@
 // 0 <= nums[i] <= 106 
 // 1 <= m <= min(50, nums.length) 
 // 
-// Related Topics 贪心 数组 二分查找 动态规划 
-// 👍 530 👎 0
-
+// Related Topics 二分查找 动态规划 
+// 👍 483 👎 0
+#include <bits/stdc++.h>
+using namespace std;
 
 //leetcode submit region begin(Prohibit modification and deletion)
 class Solution {
 public:
     int splitArray(vector<int>& nums, int m) {
+        long r = nums[0];
+        long l = nums[0];
+        for (int i = 1; i < nums.size(); i++) {
+            l = nums[i] > l ? nums[i] : l;
+            r += nums[i];
+        }
 
+        long mid;
+        while (l < r) {
+            mid = (l + r) / 2;
+            // 尝试这样划分
+            int grpCnt = 0;
+            int lastGrp = 0;
+            for (int i = 0; i < nums.size(); i++) {
+                lastGrp += nums[i];
+                if (lastGrp > mid) {
+                    grpCnt ++;
+                    lastGrp = 0;
+                    i--;
+                }
+            }
+            if (lastGrp > 0) grpCnt++;
+            if (grpCnt > m) l = mid+1;
+            else if (grpCnt <= m) r = mid;
+//            else return mid;
+        }
+        return l;
     }
 };
 //leetcode submit region end(Prohibit modification and deletion)
@@ -52,4 +79,6 @@ public:
 
 int main() {
     Solution s;
+    vector<int> v{7,2,5,10,8};
+    s.splitArray(v,2);
 }
