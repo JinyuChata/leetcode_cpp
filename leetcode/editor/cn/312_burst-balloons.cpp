@@ -28,46 +28,39 @@
 // 👍 732 👎 0
 
 #include <bits/stdc++.h>
+
 using namespace std;
 
 //leetcode submit region begin(Prohibit modification and deletion)
 class Solution {
-private:
-    vector<vector<int>> memo;
-public:
-    int dp(vector<int>& nums, int i, int j) {
-        if (memo[i][j] != -1) return memo[i][j];
 
-        int maxVal = 0;
-        for (int k = i+1; k < j; k++) {
-            // 最后一个戳破的是k
-            maxVal = max(maxVal, nums[i]*nums[j]*nums[k] + dp(nums, i, k) + dp(nums, k, j));
+public:
+    int maxCoins(vector<int> &nums) {
+        // 最后一个被戳爆的是k
+        // (i..j)中，无论最后戳爆哪个，在其他不变的情况下【i..j之外不变】，得到的最大钱数
+        nums.insert(nums.begin(), 1);
+        nums.push_back(1);
+
+        int n = nums.size();
+        // 0 [1,2,...,n] n+1
+        vector<vector<int>> dp(n, vector<int>(n, 0));
+        // dp[i][j] (i..j)开区间，其他不变，最多拿到的钱
+        // 初始化dp[0,2] dp[1,3] ...
+        for (int i = 0; i <= n-3; i++) {
+            dp[i][i+2] = nums[i+1]*nums[i]*nums[i+2];
         }
 
-        memo[i][j] = maxVal;
-        return maxVal;
-    }
+        for (int k = 3; k < n; k++) {
+            for (int i = 0; i + k < n; i++) {
+                // dp[i][i+k]
+                for (int m = i+1; m < i+k; m++) {
+                    // 戳爆m
+                    dp[i][i+k] = max(nums[m]*nums[i]*nums[i+k] + dp[i][m] + dp[m][i+k], dp[i][i+k]);
+                }
+            }
+        }
 
-    int maxCoins(vector<int>& nums) {
-        // 状态太难想了！！
-        // dp[i][j]: 在(i,j)开区间内戳气球，最大的获利
-        // -> 要关注在(i,j)内 最后一个被戳爆的是什么
-        // -> 在(i,j)内戳气球，就意味着只有(i,j)这个区间内存在气球，其他全被戳爆了
-        int n = nums.size();
-        // 两侧加上两个dumb值
-        nums.insert(nums.begin(), 1);
-        nums.insert(nums.end(), 1);
-
-        memo = vector<vector<int>>(n+2, vector<int>(n+2, -1));
-        // 初始化
-        for (int i = 0; i < n+2; i++) memo[i][i] = 0;
-        for (int i = 0; i < n+1; i++) memo[i][i+1] = 0;
-
-        // base cond:
-        // -> 无须刻意初始化，已经在dp建立时被初始化
-        // -> 不好用直接dp列表！最好还是要写递归函数
-
-        return dp(nums, 0, nums.size()-1);
+        return dp[0][n-1];
     }
 };
 //leetcode submit region end(Prohibit modification and deletion)

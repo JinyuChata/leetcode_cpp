@@ -37,22 +37,15 @@ using namespace std;
 class Solution {
 public:
     int numSquares(int n) {
-        vector<int> dp(n+1);
+        // n <= 10000
+        // dp[i] 组成i需要最少多少个完全平方数
+        vector<int> dp(n+1, INT32_MAX);
+        dp[0] = 0;
         dp[1] = 1;
         for (int i = 2; i <= n; i++) {
-            int sqrt_i = (int) sqrt(i);
-            if (sqrt_i*sqrt_i == i) dp[i] = 1;
-            else {
-                int minVal = 99999999;
-                for (int j = sqrt_i; j >= 1; j--) {
-                    minVal = min(minVal, 1+dp[i-j*j]);
-                }
-                dp[i] = minVal;
+            for (int k = 1; k*k <= i; k++) {
+                dp[i] = min(dp[i], 1+dp[i-k*k]);
             }
-        }
-
-        for (int i = 1; i <= n; i++) {
-            cout << i << ": " << dp[i] << endl;
         }
 
         return dp[n];

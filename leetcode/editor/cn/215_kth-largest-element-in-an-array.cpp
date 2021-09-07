@@ -32,31 +32,23 @@
 using namespace std;
 
 //leetcode submit region begin(Prohibit modification and deletion)
-struct MinHeapCmp
-{
-    inline bool operator()(const int &x, const int &y)
-    {
-        return x > y;
-    }
-};
+
 
 class Solution {
 public:
     int findKthLargest(vector<int>& nums, int k) {
-        vector<int> heap;
-        int size = 0;
-        for (int & num : nums) {
-            if (size < k) {
-                heap.push_back(num);
-                push_heap(heap.begin(), heap.end(), MinHeapCmp());
-                size++;
-            } else if (num > heap[0]) {
-                heap[0] = num;
-                make_heap(heap.begin(), heap.end(), MinHeapCmp());
+        priority_queue<int, vector<int>, greater<int>> q;
+        for (int& num : nums) {
+            if (q.size() == k) {
+                if (q.top() < num) {
+                    q.pop(); q.push(num);
+                }
+            } else {
+                q.push(num);
             }
         }
 
-        return heap[0];
+        return q.top();
     }
 };
 //leetcode submit region end(Prohibit modification and deletion)

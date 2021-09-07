@@ -40,34 +40,10 @@ using namespace std;
 //leetcode submit region begin(Prohibit modification and deletion)
 class Solution {
 public:
-    string parse(string s, int startIdx, int& nextIdx) {
-        string res;
-        int idx = startIdx;
-        while (idx < s.size() && s[idx] != ']') {
-            if (isdigit(s[idx])) {
-                string digit = "";
-                while (isdigit(s[idx])) {
-                    digit += string(1, s[idx]);
-                    idx++;
-                }
-                idx++;
-                string nxt = parse(s, idx, idx);        // nextIdx 返回的是下一次可以直接用的idx
-                for (int i = 0; i < stoi(digit); i++) {
-                    res += nxt;
-                }
-            } else {
-                res += string(1, s[idx]);
-                idx++;
-            }
-        }
-        nextIdx = idx+1;
-        return res;
-    }
 
     string decodeString(string s) {
         // 字符串解码
         int tmp = 0;
-        return parse(s, 0, tmp);
     }
 };
 //leetcode submit region end(Prohibit modification and deletion)

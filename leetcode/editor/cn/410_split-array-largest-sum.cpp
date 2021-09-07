@@ -39,11 +39,24 @@
 // Related Topics 贪心 数组 二分查找 动态规划 
 // 👍 530 👎 0
 
+#include "bits/stdc++.h"
+using namespace std;
 
 //leetcode submit region begin(Prohibit modification and deletion)
 class Solution {
 public:
     int splitArray(vector<int>& nums, int m) {
+        // 动态规划
+        int n = nums.size();
+        // [0,i]区间{i+1个数字}，分j个
+        int dp[n][m+1];
+        for (int i = 0; i < n; i++) {
+            // i+1数字
+            for (int j = 1; j <= i+1; j++) {
+                if ()
+            }
+        }
+
 
     }
 };

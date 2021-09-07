@@ -28,27 +28,30 @@ using namespace std;
 class Solution {
 public:
     string longestPalindrome(string s) {
-        // dp[i][j]: [i..j]是不是回文串
-        int maxSize = 1;
-        int from = 0, to = 0;
-
+        // dp[i][j]: i..j是不是回文串
+        // dp[i][i]
+        // dp[i][i+1]
         int n = s.size();
-        vector<vector<int>> dp(n, vector<int>(n, 0));
-        for (int i = 0; i < n; ++i) {
-            dp[i][i] = 1;
+        vector<vector<bool>> dp(n, vector<bool>(n, 0));
+        for (int i = 0; i < n; i++) dp[i][i] = true;
+        int start = 0;
+        int res = 1;
+        for (int i = 0; i < n - 1; i++) {
+            dp[i][i + 1] = s[i] == s[i + 1];
+            if (dp[i][i+1]) { start = i; res = 2; }
         }
 
-        for (int i = n-2; i >= 0; i--) {
-            for (int j = i+1; j < n; j++) {
-                if (s[i] == s[j] && (dp[i+1][j-1] || j-i==1)) dp[i][j] = 1;
-                if (dp[i][j] && j-i+1 > maxSize) {
-                    maxSize = j-i+1;
-                    from = i; to = j;
+        for (int k = 2; k <= n - 1; k++) {
+            for (int i = 0; i < n - k; i++) {
+                if (dp[i + 1][i + k - 1] && s[i] == s[i + k]) {
+                    dp[i][i+k] = true;
+                    res = k+1;
+                    start = i;
                 }
             }
         }
 
-        return s.substr(from, maxSize);
+        return s.substr(start, res);
     }
 };
 

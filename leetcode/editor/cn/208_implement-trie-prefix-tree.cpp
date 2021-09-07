@@ -42,57 +42,60 @@
 // word 和 prefix 仅由小写英文字母组成 
 // insert、search 和 startsWith 调用次数 总计 不超过 3 * 104 次 
 // 
-// Related Topics 设计 字典树 
-// 👍 787 👎 0
+// Related Topics 设计 字典树 哈希表 字符串 
+// 👍 863 👎 0
 
 #include "bits/stdc++.h"
-
 using namespace std;
 
 //leetcode submit region begin(Prohibit modification and deletion)
-class TrieNode {
-public:
-    string word = "";               // 记录节点颜色+到此为止的word
-    vector<TrieNode *> children;     // 记录到下一级的链接
-    TrieNode() : children(vector<TrieNode *>(26, nullptr)) {}
-};
-
 class Trie {
 public:
+    class TrieNode {
+    public:
+        string s = "";
+        vector<TrieNode*> children = vector<TrieNode*>(26, nullptr);
+    };
 
     TrieNode* root;
 
     /** Initialize your data structure here. */
-    Trie() : root(new TrieNode) { }
-
+    Trie() {
+        root = new TrieNode;
+    }
+    
     /** Inserts a word into the trie. */
     void insert(string word) {
-        TrieNode* p = root;
+        TrieNode* curr = root;
         for (char c : word) {
-            if (!p->children[c-'a']) p->children[c-'a'] = new TrieNode;
-            p = p->children[c-'a'];
+            if (curr->children[c-'a'] != nullptr) {
+                curr = curr->children[c-'a'];
+            } else {
+                curr->children[c-'a'] = new TrieNode;
+                curr = curr->children[c-'a'];
+            }
         }
-        p->word = word;
+        curr->s = word;
     }
-
+    
     /** Returns if the word is in the trie. */
     bool search(string word) {
-        TrieNode* p = root;
+        TrieNode* curr = root;
         for (char c : word) {
-            if (!p->children[c-'a']) return false;
-            p = p->children[c-'a'];
+            if (curr->children[c-'a'] == nullptr) return false;
+            curr = curr->children[c-'a'];
         }
-        return !p->word.empty();
+        return curr->s == word;
     }
-
+    
     /** Returns if there is any word in the trie that starts with the given prefix. */
     bool startsWith(string prefix) {
-        TrieNode* p = root;
+        TrieNode* curr = root;
         for (char c : prefix) {
-            if (!p->children[c-'a']) return false;
-            p = p->children[c-'a'];
+            if (curr->children[c-'a'] == nullptr) return false;
+            curr = curr->children[c-'a'];
         }
-        return true;
+        return curr != nullptr;
     }
 };
 

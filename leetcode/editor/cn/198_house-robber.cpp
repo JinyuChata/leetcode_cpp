@@ -33,12 +33,25 @@
 // Related Topics 动态规划 
 // 👍 1484 👎 0
 
+#include "bits/stdc++.h"
+using namespace std;
 
 //leetcode submit region begin(Prohibit modification and deletion)
 class Solution {
 public:
     int rob(vector<int>& nums) {
+        int n = nums.size();
+        if (n == 0) return 0;
+        // dp[i] 最后一个偷到第i个，最大是几
+        vector<int> dp(n+1);
+        dp[0] = 0; dp[1] = nums[0];
+        int ret = dp[1];
+        for (int i = 2; i <= n; i++) {
+            dp[i] = max(dp[i-1], dp[i-2]+nums[i-1]);
+            ret = max(ret, dp[i]);
+        }
 
+        return ret;
     }
 };
 //leetcode submit region end(Prohibit modification and deletion)

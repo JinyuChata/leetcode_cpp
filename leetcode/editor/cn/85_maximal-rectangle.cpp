@@ -49,83 +49,68 @@
 // 0 <= row, cols <= 200 
 // matrix[i][j] 为 '0' 或 '1' 
 // 
-// Related Topics 栈 数组 哈希表 动态规划 
-// 👍 931 👎 0
+// Related Topics 栈 数组 动态规划 矩阵 单调栈 
+// 👍 1026 👎 0
 
-#include <bits/stdc++.h>
+#include "bits/stdc++.h"
 using namespace std;
 
 //leetcode submit region begin(Prohibit modification and deletion)
-struct Block {
-    int id;
-    int height;
-
-    Block(int id, int height) : id(id), height(height) {}
-};
-
 class Solution {
 public:
+    int maxRect(vector<int> line) {
+        line.push_back(-1);
+        line.insert(line.begin(), -1);
+        int n = line.size();
+
+        vector<int> left(n, 0);
+        vector<int> right(n, n-1);
+
+        stack<int> stk;
+        for (int i = 0; i < n; i++) {
+            while (!stk.empty() && line[i] < line[stk.top()]) {
+                right[stk.top()] = i;
+                stk.pop();
+            }
+            stk.push(i);
+        }
+
+        stk = stack<int>();
+        for (int i = n-1; i >= 0; i--) {
+            while (!stk.empty() && line[i] < line[stk.top()]) {
+                left[stk.top()] = i;
+                stk.pop();
+            }
+            stk.push(i);
+        }
+
+        int maxSize = 0;
+        for (int i = 1; i < n-1; i++) {
+            maxSize = max(maxSize, line[i]*(right[i]-left[i]-1));
+        }
+        return maxSize;
+    }
+
     int maximalRectangle(vector<vector<char>>& matrix) {
         int m = matrix.size();
         if (m == 0) return 0;
         int n = matrix[0].size();
-        if (n == 0) return 0;
 
-        vector<vector<int>> rects (m, vector<int>(n, 0));
-        // 按列遍历，从左到右
+        vector<vector<int>> heights(m, vector<int>(n, 0));
         for (int j = 0; j < n; j++) {
-            int tmp = 0;
+            int curr = 0;
             for (int i = 0; i < m; i++) {
-                if (!(matrix[i][j] - '0')) {
-                    tmp = 0;
-                    continue;
-                }
-                tmp++;
-                rects[i][j] = tmp;
+                if (matrix[i][j] == '0') curr = 0;
+                else curr++;
+                heights[i][j] = curr;
             }
         }
 
         int maxSize = 0;
         for (int i = 0; i < m; i++) {
-            maxSize = max(maxSize, maxRectLine(rects[i]));
+            maxSize = max(maxSize, maxRect(heights[i]));
         }
-
         return maxSize;
-    }
-
-    int maxRectLine(vector<int>& heights) {
-        int maxSize = 0;
-        // 单调栈处理柱形图中最大矩形面积
-        stack<Block> stk;
-        stk.push(Block(-1, -1));
-
-        // 遍历柱形图，建立单调栈，并计算一部分的`两侧最大面积`
-        for (int i = 0; i < heights.size(); i++) {
-            int curHeight = heights[i];
-            while (curHeight < stk.top().height) {
-                // 出栈一个，并计算其两侧面积
-                int height = stk.top().height;
-                stk.pop();
-                int width = i - stk.top().id - 1;
-                maxSize = max(maxSize, width * height);
-            }
-            // 入站
-            stk.push(Block(i, curHeight));
-        }
-
-        // 如果还有剩余的柱子，则出栈并计算高度
-        if (stk.top().id != -1) {
-            int rightBound = stk.top().id;
-            while (stk.top().id != -1) {
-                int height = stk.top().height;
-                stk.pop();
-                int width = rightBound - stk.top().id;
-                maxSize = max(maxSize, height * width);
-            }
-        }
-
-        return maxSize;
-
     }
 };
 //leetcode submit region end(Prohibit modification and deletion)

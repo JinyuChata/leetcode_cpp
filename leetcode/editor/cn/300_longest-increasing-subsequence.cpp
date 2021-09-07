@@ -55,18 +55,16 @@ class Solution {
 public:
     int lengthOfLIS(vector<int>& nums) {
         int n = nums.size();
-        int mv = 1;
+        int m = 0;
         vector<int> dp(n, 1);
-        dp[0] = 1;
-        for (int i = 1; i < n; i++) {
-            for (int j = i-1; j >= 0; j--) {
-                if (nums[i] > nums[j]) {
-                    dp[i] = max(dp[i], dp[j]+1);
-                    mv = max(mv, dp[i]);
-                }
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < i; j++) {
+                if (nums[j] < nums[i]) dp[i] = max(dp[i], dp[j]+1);
             }
+            m = max(m, dp[i]);
         }
-        return mv;
+
+        return m;
     }
 };
 //leetcode submit region end(Prohibit modification and deletion)

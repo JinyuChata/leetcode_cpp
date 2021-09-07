@@ -35,38 +35,33 @@ class Solution {
 public:
     bool canPartition(vector<int>& nums) {
         int n = nums.size();
+        int target = 0;
+        for (int num : nums) target += num;
+        if (target % 2 == 1) return false;
+        int maxWeight = target/2;
 
-        int sum = 0;
-        for (int k : nums)
-            sum += k;
-        if (sum % 2 != 0) return false;
-        sum /= 2;
-
-        // dp[i][j]: [0...i] 中 和恰好等于j
-        vector<vector<int>> dp(n, vector<int>(sum+1, 0));
-        if (nums[0] <= sum) {
-            dp[0][nums[0]] = 1;
+        // dp[i][j] 0..i中可选，背包最大容量j，能凑出的最大价值
+        // nums[i] 既是重量、又是价值
+        vector<vector<int>> dp(n, vector<int>(maxWeight+1, 0));
+        // 初始化 dp[0][i]
+        for (int j = nums[0]; j <= maxWeight; j++) {
+            dp[0][j] = nums[0];
         }
-
         for (int i = 1; i < n; i++) {
-            for (int j = 0; j <= sum; j++) {
-                dp[i][j] = dp[i-1][j];
-                if (j - nums[i] >= 0) {
-                    dp[i][j] = dp[i][j] || dp[i-1][j-nums[i]];
-                }
+            for (int j = 0; j <= maxWeight; j++) {
+                int num = nums[i];
+                if (num > j) dp[i][j] = dp[i-1][j];
+                else dp[i][j] = max(dp[i-1][j], dp[i-1][j-num] + num);
             }
         }
 
-        return dp[n-1][sum];
+        return dp[n-1][maxWeight] == maxWeight;
     }
 };
 //leetcode submit region end(Prohibit modification and deletion)
 
 int main() {
-    vector<int> v{67,95,58,76,19,60,20,17,23,23,67,85,8,67,81,65,73,92,59,97,45,94,26,90,70,45,
-                  24,52,25,43,2,83,15,25,66,87,77,11,46,75,46,59,17,84,11,64,9,74,65,78,85,3,87,
-                  81,67,37,79,50,14,88,55,45,58,31,75,74,13,2,60,51,94,82,63,90,25,60,86,12,42,
-                  78,33,8,50,84,86,71,46,47,15,86,56,64,8,26,34,21,21,24,49,16};
+    vector<int> v{1,5,11,5};
     Solution s;
     cout << s.canPartition(v);
 }

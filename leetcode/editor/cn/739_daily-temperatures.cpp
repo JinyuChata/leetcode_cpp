@@ -17,19 +17,19 @@ class Solution {
 public:
     vector<int> dailyTemperatures(vector<int>& temperatures) {
         int n = temperatures.size();
-        stack<int> downStkIdxs;
-        vector<int> days(n, 0);
-
+        vector<int> result(n, 0);
+        // 极小栈，小的才能压进去, 压进去的是idx
+        stack<int> stk;
         for (int i = 0; i < n; i++) {
-            while (!downStkIdxs.empty() && temperatures[i] > temperatures[downStkIdxs.top()]) {
-                days[downStkIdxs.top()] = i-downStkIdxs.top();
-                downStkIdxs.pop();
+            int temp = temperatures[i];
+            while (!stk.empty() && temp > temperatures[stk.top()]) {
+                int lastI = stk.top(); stk.pop();
+                result[lastI] = i - lastI;
             }
-            downStkIdxs.push(i);
+            stk.push(i);
         }
 
-        return days;
-
+        return result;
     }
 };
 //leetcode submit region end(Prohibit modification and deletion)
