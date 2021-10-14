@@ -49,24 +49,27 @@ using namespace std;
 //leetcode submit region begin(Prohibit modification and deletion)
 class Solution {
 public:
-    // {curr,sum} => cnt
-    map<pair<int, int>, int> memo;
-
-    int dfs(vector<int>& nums, int curr, int target, int sum) {
-        if (curr == nums.size()) {
-            return sum == target ? 1 : 0;
-        }
-        if (memo.count({curr, sum})) {
-            return memo[{curr, sum}];
-        }
-        int res = dfs(nums, curr+1, target, sum+nums[curr]) +
-               dfs(nums, curr+1, target, sum-nums[curr]);
-        memo[{curr, sum}] = res;
-        return res;
-    }
-
     int findTargetSumWays(vector<int>& nums, int target) {
-        return dfs(nums, 0, target, 0);
+        // dfs是一种办法
+        // dp: 先算算数学推导，假设将nums分成x、y两部分
+        //     x+y=sum, x-y=target
+        //     则 2x=sum+target
+        int sum = 0;
+        for (int& num : nums) sum += num;
+        int t = sum + target;       // 一定>0
+        if ( t % 2 == 1) return 0;
+        t /= 2;
+
+        vector<int> dp(t+1);
+        dp[0] = 1;
+        for (int num : nums) {
+            for (int i = t; i >= num; i--) {
+                dp[i] = dp [i]+ dp[i-num];
+            }
+        }
+
+        return dp[t];
+
     }
 };
 //leetcode submit region end(Prohibit modification and deletion)

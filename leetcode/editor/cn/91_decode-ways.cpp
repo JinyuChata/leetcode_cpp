@@ -74,26 +74,23 @@ using namespace std;
 class Solution {
 public:
     int numDecodings(string s) {
-        // dp[i] [i ... n-1]范围内，组合的种类数
+        // dp[i]: [0..i]解码种类数
         int n = s.size();
-        vector<int> dp(n+1, 0);     // dp[n]是dumb, 为0
-        dp[n] = 1;
-        for (int i = n - 1; i >= 0; i--) {
-            if (s[i] == '0') dp[i] = 0;      // 不存在0*的映射
-            else {
-                int tot = 0;
-                if (i == n - 1) { // 最后一个，不存在与后序的组合
-                    dp[i] = 1;
-                    continue;
+        vector<int> dp(n, 0);
+        if (s[0] != '0') dp[0] = 1;
+
+        for (int i = 1; i < n; i++) {
+            if (s[i] != '0') dp[i] += dp[i-1];
+            if (s[i-1] != '0') {
+                int target = stoi(s.substr(i-1, 2));
+                if (target >= 1 && target <= 26) {
+                    if (i != 1) dp[i] += dp[i-2];
+                    else dp[i] += 1;
                 }
-                tot += dp[i+1];
-                if (i <= n - 2 && stoi(s.substr(i, 2)) <= 26) {
-                    tot += dp[i+2];
-                }
-                dp[i] = tot;
             }
         }
-        return dp[0];
+
+        return dp[n-1];
     }
 };
 //leetcode submit region end(Prohibit modification and deletion)

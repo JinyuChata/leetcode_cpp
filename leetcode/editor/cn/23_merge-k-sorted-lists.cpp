@@ -44,23 +44,37 @@
 // 
 // Related Topics 链表 分治 堆（优先队列） 归并排序 
 // 👍 1481 👎 0
+#include "bits/stdc++.h"
+using namespace std;
 
+struct ListNode {
+    int val;
+    ListNode *next;
+    ListNode() : val(0), next(nullptr) {}
+    ListNode(int x) : val(x), next(nullptr) {}
+    ListNode(int x, ListNode *next) : val(x), next(next) {}
+};
 
 //leetcode submit region begin(Prohibit modification and deletion)
-/**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode() : val(0), next(nullptr) {}
- *     ListNode(int x) : val(x), next(nullptr) {}
- *     ListNode(int x, ListNode *next) : val(x), next(next) {}
- * };
- */
 class Solution {
 public:
-    ListNode* mergeKLists(vector<ListNode*>& lists) {
+    static bool cmp(ListNode* l1, ListNode* l2) {
+        return l2->val < l1->val;
+    }
 
+    ListNode* mergeKLists(vector<ListNode*>& lists) {
+        priority_queue<ListNode*, vector<ListNode*>, decltype(&cmp)> heap(cmp);
+        // 先都放进去
+        for (ListNode* ln : lists) { if (ln != nullptr) heap.push(ln); }
+        ListNode* dumb = new ListNode; ListNode* curr = dumb;
+        while (!heap.empty()) {
+            ListNode* node = heap.top(); heap.pop();
+            ListNode* next = node->next; node->next = nullptr;
+            curr->next = node; curr = node;
+            if (next != nullptr) heap.push(next);
+        }
+
+        return dumb->next;
     }
 };
 //leetcode submit region end(Prohibit modification and deletion)

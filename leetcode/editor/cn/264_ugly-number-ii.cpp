@@ -35,29 +35,32 @@
 using namespace std;
 class Solution {
 public:
-    int nthUglyNumber(int n) {
-        // minHeap shixian
-        vector<int> factors = {2, 3, 5};
-        unordered_set<long> seen;
-        priority_queue<long, vector<long>, greater<long>> heap;
-        seen.insert(1);
-        heap.push(1);
-        int ugly = 0;
+    static bool cmp(int& i, int& j) {
+        return i > j;
+    }
 
-        for (int i = 0; i < n; i++) {
-            long curr = heap.top();
-            heap.pop();
-            ugly = (int) curr;
-            for (int f : factors) {
-                long next = curr*f;
-                if (!seen.count(next)) {
-                    seen.insert(next);
-                    heap.push(next);
-                }
+    int nthUglyNumber(int n) {
+        // 最小堆
+        priority_queue<long long, vector<int>, decltype(&cmp)> heap(cmp);
+        unordered_set<long long> collected;
+        collected.insert(1);
+        heap.push(1);
+
+        while (true) {
+            n--;
+            int curr = heap.top(); heap.pop();
+            if (n == 0) return curr;
+            // *2 *3 *5
+            if (!collected.count(curr*2)) {
+                heap.push(curr*2); collected.insert(curr*2);
+            }
+            if (!collected.count(curr*3)) {
+                heap.push(curr*3); collected.insert(curr*3);
+            }
+            if (!collected.count(curr*5)) {
+                heap.push(curr*5); collected.insert(curr*5);
             }
         }
-
-        return ugly;
     }
 };
 //leetcode submit region end(Prohibit modification and deletion)

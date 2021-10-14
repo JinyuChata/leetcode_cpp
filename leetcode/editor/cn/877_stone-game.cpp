@@ -40,7 +40,7 @@ using namespace std;
 //leetcode submit region begin(Prohibit modification and deletion)
 class Solution {
 public:
-    bool stoneGame(vector<int>& piles) {
+    bool stoneGameDp(vector<int>& piles) {
         // 博弈论   dp[i][j] 是仅考虑[i..j]棋子时，先手-后手的最大值
         // 则每一次选择最优决策，都会让dp取到更大的
         // dp[i][j] = max{ piles[i] - dp[i+1][j], piles[j] - dp[i][j-1] }
@@ -59,6 +59,10 @@ public:
         return dp[0][n-1];
 
 
+    }
+
+    bool stoneGame(vector<int>& piles) {
+        return true;
     }
 };
 //leetcode submit region end(Prohibit modification and deletion)
